@@ -22,8 +22,20 @@ namespace :db do
 end
 
 namespace :aws do
+	if ENV['AWS_ACCESS_KEY'].nil?
+		puts 'AWS_ACCESS_KEY is not set!'
+		exit
+	elsif ENV['AWS_SECRET_KEY'].nil?
+		puts 'AWS_SECRET_KEY is not set!'
+		exit
+	end
+
 	task :start_honeypots do
 		start_honeypots
+	end
+
+	task :list_honeypots do
+		list_honeypots
 	end
 
 	task :stop_honeypots do
