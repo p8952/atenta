@@ -32,9 +32,9 @@ def start_instance(region)
 		security_groups: 'default',
 		key_pair: key_pair
 	)
-	instance.add_tag('atenta')
 	puts "Starting Honeypot: #{instance.id}"
 	sleep 5 while instance.status == :pending
+	instance.add_tag('atenta')
 end
 
 def list_instances
