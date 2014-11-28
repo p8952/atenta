@@ -9,7 +9,7 @@ require_relative 'lib/attacks'
 require_relative 'lib/aws'
 require_relative 'lib/models'
 
-class AttackDashboard < Sinatra::Base
+class Atenta < Sinatra::Base
 	get '/' do
 		redirect to('/attacks')
 	end

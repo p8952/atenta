@@ -23,7 +23,7 @@ end
 
 def start_instance(region)
 	AWS.config(region: region)
-	key_pair = @ec2.key_pairs.create("attack-dashboard-#{Time.now.to_i}")
+	key_pair = @ec2.key_pairs.create("atenta-#{Time.now.to_i}")
 	ami_id = @ec2.images.filter('name', 'RHEL-7.0_GA_HVM-x86_64*').to_a.sort_by(&:name).last.id
 	instance = @ec2.instances.create(
 		image_id: ami_id,
@@ -32,8 +32,9 @@ def start_instance(region)
 		security_groups: 'default',
 		key_pair: key_pair
 	)
-	instance.add_tag('attack-dashboard')
+	instance.add_tag('atenta')
 	puts "Starting Honeypot: #{instance.id}"
+	sleep 5 while instance.status == :pending
 end
 
 def list_instances
@@ -41,7 +42,7 @@ def list_instances
 	@ec2.regions.each do |region|
 		@ec2.regions[region.name].instances.each do |instance|
 			instance.tags.each do |key, _val|
-				next if key != 'attack-dashboard'
+				next if key != 'atenta'
 				next if instance.status == :terminated
 				instances << instance
 			end
