@@ -11,10 +11,6 @@ require_relative 'lib/models'
 
 class Atenta < Sinatra::Base
 	get '/' do
-		redirect to('/attacks')
-	end
-
-	get '/attacks' do
-		erb :attacks
+		erb :home
 	end
 end
