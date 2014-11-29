@@ -32,9 +32,14 @@ def start_instance(region)
 		security_groups: 'default',
 		key_pair: key_pair
 	)
-	puts "Starting Honeypot: #{instance.id}"
-	sleep 5 while instance.status == :pending
-	instance.add_tag('atenta')
+	begin
+		sleep 5 while instance.status == :pending
+		instance.add_tag('atenta')
+	rescue
+		instance.key_pair.delete
+		instance.delete
+	end
+	puts "Started Honeypot: #{instance.id}"
 end
 
 def list_instances
@@ -52,7 +57,7 @@ def list_instances
 end
 
 def delete_instance(instance)
-	puts "Deleting Honeypot: #{instance.id}"
 	instance.key_pair.delete
 	instance.delete
+	puts "Deleted Honeypot: #{instance.id}"
 end
