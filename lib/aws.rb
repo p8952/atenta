@@ -14,6 +14,12 @@ def list_honeypots
 	end
 end
 
+def harvest_honeypots
+	list_instances.each do |instance|
+		collect_logs(instance)
+	end
+end
+
 def stop_honeypots
 	list_instances.each do |instance|
 		delete_instance(instance)
@@ -97,6 +103,14 @@ def list_instances
 		end
 	end
 	instances
+end
+
+def collect_logs(instance)
+	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/keys/#{instance.id}.pem")
+	Net::SCP.start(instance.ip_address, 'ec2-user', key_data: key_file) do |scp|
+		scp.download!('/home/ec2-user/sshd.log', "honeypots/logs/sshd-#{instance.id}.log")
+	end
+	puts "Harvested Honeypot: #{instance.id} #{instance.availability_zone}"
 end
 
 def delete_instance(instance)

@@ -38,6 +38,10 @@ namespace :aws do
 		list_honeypots
 	end
 
+	task :harvest_honeypots do
+		harvest_honeypots
+	end
+
 	task :stop_honeypots do
 		stop_honeypots
 	end
