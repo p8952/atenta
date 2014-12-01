@@ -10,6 +10,8 @@ Metrics/PerceivedComplexity:
     Enabled: false
 Style/Documentation:
     Enabled: false
+Style/IndentArray:
+    Enabled: false
 Style/IndentationWidth:
     Enabled: false
 Style/Tab:
