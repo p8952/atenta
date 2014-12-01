@@ -12,12 +12,12 @@ namespace :db do
 		Sequel::Migrator.run(DB, 'db/migrations')
 	end
 
-	task :attacks_clear do
-		attacks_delete
+	task :clear_attacks do
+		clear_attacks
 	end
 
-	task :attacks_populate do
-		attacks_populate
+	task :populate_attacks do
+		populate_attacks
 	end
 end
 
