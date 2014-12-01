@@ -2,4 +2,3 @@
 .bundle
 honeypots/keys/*.pem
 honeypots/logs/*.log
-keys/*.pem

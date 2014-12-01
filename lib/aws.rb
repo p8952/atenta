@@ -9,8 +9,7 @@ end
 
 def list_honeypots
 	list_instances.each do |instance|
-		puts "Active Honeypot: #{instance.id} #{instance.availability_zone} #{instance.ip_address} " + \
-		"(ssh -i keys/#{instance.id}.pem ec2-user@#{instance.ip_address})"
+		puts "Active Honeypot: #{instance.id} #{instance.availability_zone} #{instance.ip_address}"
 	end
 end
 
@@ -65,8 +64,10 @@ def start_instance(region)
 	rescue
 		instance.key_pair.delete
 		instance.delete
+		puts "Failed To Start Honeypot: #{instance.id} #{instance.availability_zone}"
+		exit
 	end
-	key_file = "#{File.dirname(File.dirname(__FILE__))}/keys/#{instance.id}.pem"
+	key_file = "#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem"
 	File.write(key_file, key_pair.private_key)
 	File.chmod(0400, key_file)
 	puts "Started Honeypot: #{instance.id} #{instance.availability_zone}"
@@ -74,7 +75,7 @@ end
 
 def configure_instance(instance)
 	return if instance.tags.include?('configured')
-	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/keys/#{instance.id}.pem")
+	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem")
 	begin
 		Net::SSH.start(instance.ip_address, 'ec2-user', key_data: key_file) do |ssh|
 			ssh.exec!('sudo sed -i "s/permissive/disabled/g" /etc/selinux/config')
@@ -89,6 +90,7 @@ def configure_instance(instance)
 		retry
 	end
 	instance.add_tag('configured')
+	puts "Configured Honeypot: #{instance.id} #{instance.availability_zone}"
 end
 
 def list_instances
@@ -106,7 +108,7 @@ def list_instances
 end
 
 def collect_logs(instance)
-	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/keys/#{instance.id}.pem")
+	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem")
 	Net::SCP.start(instance.ip_address, 'ec2-user', key_data: key_file) do |scp|
 		scp.download!('/home/ec2-user/sshd.log', "honeypots/logs/sshd-#{instance.id}.log")
 	end
@@ -115,7 +117,7 @@ end
 
 def delete_instance(instance)
 	return if instance.status != :running
-	key_file = "#{File.dirname(File.dirname(__FILE__))}/keys/#{instance.id}.pem"
+	key_file = "#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem"
 	File.delete(key_file)
 	instance.key_pair.delete
 	instance.delete
