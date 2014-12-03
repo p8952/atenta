@@ -13,19 +13,23 @@ end
 def check_line(line)
 	regexes = [
 		/Connection closed by .* \[preauth\]/,
-		/Invalid user .* from/
+		/Did not receive identification string from/,
+		/Invalid user .* from/,
+		/Received disconnect from .* Bye Bye \[preauth\]/
 	]
 	regexes.each do |regex|
 		record_line(line) if line =~ regex
 	end
 end
 def record_line(line)
-	timestamp = Time.parse((/^[A-Z][a-z]{2} ( \d|\d{2}) \d{2}:\d{2}:\d{2}/).match(line).to_s)
-	source_ip = (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/).match(line).to_s
-	target_ip = (/\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}/).match(line).to_s.gsub('-', '.')
-	Attacks.find_or_create(
-		timestamp: timestamp,
-		source_ip: source_ip,
-		target_ip: target_ip
-	)
+	begin
+		timestamp = Time.parse((/^[A-Z][a-z]{2} ( \d|\d{2}) \d{2}:\d{2}:\d{2}/).match(line).to_s)
+		source_ip = (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/).match(line).to_s
+		target_ip = (/\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}/).match(line).to_s.gsub('-', '.')
+		Attacks.find_or_create(
+			timestamp: timestamp,
+			source_ip: source_ip,
+			target_ip: target_ip
+		)
+	end
 end
