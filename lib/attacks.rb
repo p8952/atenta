@@ -15,14 +15,12 @@ def check_line(line)
 		/Connection closed by .* \[preauth\]/,
 		/Invalid user .* from/
 	]
-
 	regexes.each do |regex|
 		record_line(line) if line =~ regex
 	end
 end
-
 def record_line(line)
-	timestamp = Time.parse((/^[A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2}/).match(line).to_s)
+	timestamp = Time.parse((/^[A-Z][a-z]{2} ( \d|\d{2}) \d{2}:\d{2}:\d{2}/).match(line).to_s)
 	source_ip = (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/).match(line).to_s
 	target_ip = (/\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}/).match(line).to_s.gsub('-', '.')
 	Attacks.find_or_create(
