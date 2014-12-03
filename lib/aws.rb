@@ -1,26 +1,26 @@
 def start_honeypots
-	ec2.regions.each do |region|
+	ec2.regions.peach do |region|
 		start_instance(region.name)
 	end
-	list_instances.each do |instance|
+	list_instances.peach do |instance|
 		configure_instance(instance)
 	end
 end
 
 def list_honeypots
-	list_instances.each do |instance|
+	list_instances.peach do |instance|
 		puts "Active Honeypot: #{instance.id} #{instance.availability_zone} #{instance.ip_address}"
 	end
 end
 
 def harvest_honeypots
-	list_instances.each do |instance|
+	list_instances.peach do |instance|
 		collect_logs(instance)
 	end
 end
 
 def stop_honeypots
-	list_instances.each do |instance|
+	list_instances.peach do |instance|
 		delete_instance(instance)
 	end
 end
@@ -95,9 +95,9 @@ end
 
 def list_instances
 	instances = []
-	ec2.regions.each do |region|
-		ec2.regions[region.name].instances.each do |instance|
-			instance.tags.each do |key, _val|
+	ec2.regions.peach do |region|
+		ec2.regions[region.name].instances.peach do |instance|
+			instance.tags.peach do |key, _val|
 				next if key != 'atenta'
 				next if instance.status != :running
 				instances << instance

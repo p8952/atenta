@@ -2,6 +2,7 @@ require 'aws-sdk'
 require 'logger'
 require 'net/scp'
 require 'net/ssh'
+require 'pmap'
 require 'sequel'
 require 'sinatra/base'
 
