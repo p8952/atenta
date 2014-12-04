@@ -14,4 +14,11 @@ class Atenta < Sinatra::Base
 	get '/' do
 		erb :home
 	end
+
+	get '/api/:start_time/:end_time' do
+		start_time = Time.strptime(params[:start_time], '%s')
+		end_time = Time.strptime(params[:end_time], '%s')
+		puts Attacks.where(:timestamp => start_time..end_time).to_json
+		Attacks.where(:timestamp => start_time..end_time).to_json
+	end
 end
