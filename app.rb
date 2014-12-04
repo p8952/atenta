@@ -11,14 +11,24 @@ require_relative 'lib/aws'
 require_relative 'lib/models'
 
 class Atenta < Sinatra::Base
+	Thread.new do
+		while true
+			harvest_honeypots
+			populate_attacks
+		end
+	end
+
 	get '/' do
 		erb :home
+	end
+
+	get '/time' do
+		"#{Time.now.to_i}"
 	end
 
 	get '/api/:start_time/:end_time' do
 		start_time = Time.strptime(params[:start_time], '%s')
 		end_time = Time.strptime(params[:end_time], '%s')
-		puts Attacks.where(:timestamp => start_time..end_time).to_json
 		Attacks.where(:timestamp => start_time..end_time).to_json
 	end
 end
