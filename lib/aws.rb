@@ -2,9 +2,6 @@ def start_honeypots
 	ec2.regions.peach do |region|
 		start_instance(region.name)
 	end
-	list_instances.peach do |instance|
-		configure_instance(instance)
-	end
 end
 
 def list_honeypots
@@ -71,6 +68,8 @@ def start_instance(region)
 	File.write(key_file, key_pair.private_key)
 	File.chmod(0400, key_file)
 	puts "Started Honeypot: #{instance.id} #{instance.availability_zone}"
+
+	configure_instance(instance)
 end
 
 def configure_instance(instance)
@@ -78,6 +77,7 @@ def configure_instance(instance)
 	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem")
 	begin
 		Net::SSH.start(instance.ip_address, 'ec2-user', key_data: key_file) do |ssh|
+			ssh.exec!('sudo ln -sf /usr/share/zoneinfo/UTC /etc/localtime')
 			ssh.exec!('sudo sed -i "s/permissive/disabled/g" /etc/selinux/config')
 			ssh.exec!('sudo setenforce Permissive')
 			ssh.exec!('echo "if \$programname == \'sshd\' then /home/ec2-user/sshd.log" | sudo tee /etc/rsyslog.d/sshd.conf')
@@ -86,6 +86,7 @@ def configure_instance(instance)
 			ssh.exec!('sudo service sshd restart')
 		end
 	rescue
+		puts "Error Configuring Honeypot: #{instance.id} #{instance.availability_zone}... Retrying"
 		sleep 5
 		retry
 	end
