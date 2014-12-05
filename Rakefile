@@ -1,4 +1,14 @@
-require_relative 'app'
+require 'aws-sdk'
+require 'logger'
+require 'net/scp'
+require 'net/ssh'
+require 'pmap'
+require 'sequel'
+require 'sinatra/base'
+
+require_relative 'lib/attacks'
+require_relative 'lib/aws'
+require_relative 'lib/models'
 
 task :test do
 	Dir.glob('./test/test_*.rb') { |f| require f }
