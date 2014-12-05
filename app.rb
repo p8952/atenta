@@ -22,13 +22,9 @@ class Atenta < Sinatra::Base
 		erb :home
 	end
 
-	get '/time' do
-		"#{Time.now.to_i}"
-	end
-
-	get '/api/:start_time/:end_time' do
-		start_time = Time.strptime(params[:start_time], '%s')
-		end_time = Time.strptime(params[:end_time], '%s')
+	get '/attacks' do
+		start_time = Time.at(Time.now.to_i - 30)
+		end_time = Time.now
 		Attacks.where(:timestamp => start_time..end_time).to_json
 	end
 end
