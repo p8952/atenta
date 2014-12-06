@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'geoip'
 require 'logger'
 require 'net/scp'
 require 'net/ssh'

@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'geoip'
 require 'logger'
 require 'net/scp'
 require 'net/ssh'
@@ -12,7 +13,7 @@ require_relative 'lib/models'
 
 class Atenta < Sinatra::Base
 	Thread.new do
-		while true
+		loop do
 			harvest_honeypots
 			populate_attacks
 		end

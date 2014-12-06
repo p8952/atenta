@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'aws-sdk'
+gem 'geoip'
 gem 'net-scp'
 gem 'net-ssh'
 gem 'pmap'

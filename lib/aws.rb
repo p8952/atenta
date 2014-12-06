@@ -47,17 +47,17 @@ def start_instance(region)
 
 	ami_id = ec2(region).images.filter('name', 'RHEL-7.0*HVM*x86_64*').to_a.sort_by(&:name).last.id
 	key_pair = ec2(region).key_pairs.create("atenta-#{Time.now.to_i}")
-	instance = ec2(region).instances.create(
-		image_id: ami_id,
-		instance_type: 't2.micro',
-		count: 1,
-		security_group_ids: security_group.id,
-		key_pair: key_pair,
-		user_data: norequiretty.join("\n")
-	)
 	begin
-		sleep 5 while instance.status != :running
+		instance = ec2(region).instances.create(
+			image_id: ami_id,
+			instance_type: 't2.micro',
+			count: 1,
+			security_group_ids: security_group.id,
+			key_pair: key_pair,
+			user_data: norequiretty.join("\n")
+		)
 		instance.add_tag('atenta')
+		sleep 5 while instance.status != :running
 	rescue
 		instance.key_pair.delete
 		instance.delete
@@ -111,7 +111,7 @@ end
 def collect_logs(instance)
 	key_file = File.read("#{File.dirname(File.dirname(__FILE__))}/honeypots/keys/#{instance.id}.pem")
 	Net::SCP.start(instance.ip_address, 'ec2-user', key_data: key_file) do |scp|
-		scp.download!('/home/ec2-user/sshd.log', "honeypots/logs/sshd-#{instance.id}.log")
+		scp.download!('/home/ec2-user/sshd.log', "honeypots/logs/sshd-#{instance.ip_address}.log")
 	end
 	puts "Harvested Honeypot: #{instance.id} #{instance.availability_zone}"
 end
