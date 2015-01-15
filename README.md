@@ -1,6 +1,6 @@
 # Atenta
 
-A (near) real time cyber-attack dashboard, released under a free software licence (AGPL) 
+A real time cyber-attack dashboard, released under a free software licence (AGPL) 
 
 ## Demo
 
