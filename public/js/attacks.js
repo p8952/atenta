@@ -10,8 +10,8 @@ function getAttacks(){
 			$(".attacks").append(
 				"<tr class=\"attack\">" +
 				"<td>" + this.timestamp + "</td>" +
-				"<td>" + this.source_ip + " (<img src=\"\/flag\/" + this.source_geo + ".png\">)" + "</td>" +
-				"<td>" + this.target_ip + " (<img src=\"\/flag\/" + this.target_geo + ".png\">)" + "</td>" +
+				"<td>" + this.source_ip + " (" + this.source_geo + ")" + "</td>" +
+				"<td>" + this.target_ip + " (" + this.target_geo + ")" + "</td>" +
 				"</tr>");
 		});
 	});

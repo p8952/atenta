@@ -1,5 +1,4 @@
 Sequel.migration do
-
 	change do
 		create_table :attacks do
 			primary_key :id
@@ -8,5 +7,4 @@ Sequel.migration do
 			String :target_ip
 		end
 	end
-
 end
